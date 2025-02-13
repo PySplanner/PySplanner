@@ -21,7 +21,7 @@ PySplanner employs an optimized version of the Pure Pursuit algorithm to balance
 At the core of PySplanner is its path planner, built using OpenCV-Python, which enables users to define precise routes for the robot to follow. Users can plot waypoints along the robot’s intended route, which are then connected using cubic polynomial splines for smooth transitions. The path planner also integrates an FLL (First LEGO League) competition table background, allowing for the paths to be created with the season-specific table layout. This feature is invaluable for competition teams looking to simulate real-world conditions in their path planning.
 
 > [!IMPORTANT]
-> The path planner is being transitioned to a web-based UI hosted at https://pysplanner.github.io 
+> The path planner is being transitioned to a web-based UI hosted at https://pysplanner.github.io (Currently not usable)
 
 ### Path Editor
 The path editor provides users with the flexibility to adjust and refine the planned routes with millimeter-level precision. By moving waypoints within the path, users can optimize the robot's trajectory for maximum performance. Additionally, the path editor supports the addition of specific actions along the route, such as activating motors or performing other tasks. These actions can be configured as either blocking or non-blocking, allowing for precise timing and coordination during execution. This degree of customization ensures that robots can handle complex missions autonomously with minimal intervention.
