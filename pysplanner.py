@@ -7,7 +7,9 @@
 # © 2024 SkroutzTBY (https://github.com/SkroutzTBY)
 # NOTE: Comments and some QOL features have been removed to save on file size
 
-_HUB_TYPE = "{INSERT_HUB_TYPE}"
+PATH_PLANNER_DATA = "{INSERT_PATH_PLANNER_DATA}"
+
+_HUB_TYPE = PATH_PLANNER_DATA["hub_type"]
 
 from pybricks.parameters import Button, Color, Port
 if _HUB_TYPE == "Spike":
@@ -44,12 +46,12 @@ from pybricks.tools import wait
 opt_level(3)
 
 # Variables needed for classes and functions
-_WHEEL_DIAMETER = "{INSERT_WHEEL_DIAMETER}"
-_AXLE_TRACK = "{INSERT_AXLE_TRACK}"
+_WHEEL_DIAMETER = PATH_PLANNER_DATA["drivebase"]["wheel_diameter"]
+_AXLE_TRACK = PATH_PLANNER_DATA["drivebase"]["axle_track"]
 _WHEEL_RADIUS = _WHEEL_DIAMETER / 2
 _WHEEL_CIRCUMFERENCE = math.pi * _WHEEL_DIAMETER
-_LEFT_MOTOR = "{INSERT_LEFT_MOTOR}"
-_RIGHT_MOTOR = "{INSERT_RIGHT_MOTOR}"
+_LEFT_MOTOR = Motor(ord(PATH_PLANNER_DATA["left_motor"]))
+_RIGHT_MOTOR = Motor(ord(PATH_PLANNER_DATA["right_motor"]))
 _ROBOT = DriveBase(_LEFT_MOTOR, _RIGHT_MOTOR, _WHEEL_DIAMETER, _AXLE_TRACK)
 
 quit_program = False
@@ -417,7 +419,9 @@ class DriveController:
         self.turn_rate = self._calculate_turn_rate(turn_vel, self.target_speed)
         self.status = final_dist < self.finished_distance
 
-runs = "{INSERT_RUNS_HERE}"
+runs = []
+for run in PATH_PLANNER_DATA["runs"]:
+    runs.append(TableRun(run["name"], "", "left", run["points"]))
 
 wait(1500)
 light.off()
