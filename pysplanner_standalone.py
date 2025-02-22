@@ -913,8 +913,6 @@ class DriveController:
 
         # Precompute values
         heading_rad = math.radians(self.heading)
-        cos_heading = math.cos(heading_rad)
-        sin_heading = math.sin(heading_rad)
 
         # Initialize variables for the closest point search
         min_dist_sq = float('inf')

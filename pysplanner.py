@@ -7,9 +7,13 @@
 # © 2024 SkroutzTBY (https://github.com/SkroutzTBY)
 # NOTE: Comments and some QOL features have been removed to save on file size
 
-PATH_PLANNER_DATA = "{INSERT_PATH_PLANNER_DATA}"
+PATH_PLANNER_DATA = {"name":"New Splan","hub_type":"EV3","drive_base":{"left_motor":"D","right_motor":"A","wheel_diameter":42,"axle_track":93},"runs":[{"name":"New Run","points":[[155.609375,43.515625],[162.21560677842564,71.83632470845481],[167.5510659620991,101.183263483965],[171.96232689504373,131.27655794460642],[175.7959639212828,161.8363247084548],[179.39855138483964,192.582680393586],[183.11666362973764,223.2357416180758],[187.296875,253.515625],[192.28575983965015,283.1424471574344],[198.42989249271136,311.8363247084548],[206.075847303207,339.3173742711371],[215.57019861516034,365.30571246355686],[227.25952077259475,389.5214559037901],[241.49038811953352,411.6847212099125],[258.609375,431.515625],[258.609375,431.515625],[277.53737499999994,448.1535509259259],[299.22893055555556,463.4368101851852],[323.345375,477.41962500000005],[349.5480416666667,490.15621759259255],[377.4982638888889,501.70081018518516],[406.85737500000005,512.107625],[437.2867083333333,521.4308842592592],[468.44759722222227,529.7248101851852],[500.0013750000001,537.0436250000001],[531.6093749999999,543.441550925926],[562.9329305555555,548.9728101851852],[593.633375,553.6916249999999],[623.3720416666665,557.6522175925925],[651.8102638888888,560.9088101851852],[678.609375,563.515625],[678.609375,563.515625],[710.7332175925926,565.9331597222222],[742.4334490740741,567.3559027777778],[773.703125,567.6640625],[804.535300925926,566.7378472222222],[834.9230324074074,564.4574652777777],[864.859375,560.703125],[894.3373842592592,555.3550347222223],[923.3501157407408,548.2934027777777],[951.890625,539.3984375],[979.9519675925926,528.5503472222222],[1007.5271990740741,515.6293402777777],[1034.609375,500.515625],[1034.609375,500.515625],[1056.7753009259259,485.90229166666666],[1080.0967824074075,468.355625],[1104.209375,448.31562500000007],[1128.7486342592592,426.22229166666665],[1153.3501157407406,402.51562499999994],[1177.649375,377.635625],[1201.2819675925925,352.0222916666667],[1223.8834490740737,326.11562499999997],[1245.089375,300.35562500000003],[1264.535300925926,275.18229166666663],[1281.8567824074073,251.035625],[1296.689375,228.35562499999997],[1308.6686342592593,207.5822916666667],[1317.4301157407406,189.15562500000007],[1322.609375,173.515625],[1322.609375,173.515625],[1323.9883837463556,146.06081450437318],[1314.62103680758,123.85673287172013],[1295.2507744169097,106.50104774052478],[1266.6210368075801,93.59142674927114],[1229.475264212828,84.72553753644311],[1184.5568968658893,79.50104774052478],[1132.609375,77.515625],[1132.609375,77.515625],[1112.3264374999999,77.7915625],[1090.225875,78.92312499999998],[1066.4550625000002,80.84093750000001],[1041.161375,83.47562500000002],[1014.4921875,86.7578125],[986.5948750000001,90.618125],[957.6168124999999,94.9871875],[927.705375,99.795625],[897.0079375,104.9740625],[865.671875,110.453125],[833.8445624999999,116.16343749999999],[801.6733749999999,122.03562500000001],[769.3056875000001,128.0003125],[736.8888750000001,133.98812500000003],[704.5703125,139.9296875],[672.497375,145.755625],[640.8174375000002,151.3965625],[609.6778749999999,156.78312499999998],[579.2260625,161.84593750000002],[549.609375,166.515625]],"actions":[]}]}
 
 _HUB_TYPE = PATH_PLANNER_DATA["hub_type"]
+_VISUALIZE = True
+_VISUALIZE_IP = "169.254.219.105"
+_VISUALIZE_PORT = 65432
+_SEND_EVERY_X_FRAMES = 3
 
 from pybricks.parameters import Button, Color, Port
 if _HUB_TYPE == "Spike":
@@ -22,6 +26,8 @@ if _HUB_TYPE == "Spike":
 
     from pybricks.tools import multitask as thread_handler
     from pybricks.pupdevices import Motor
+    import ustruct as struct
+    from usys import stdout
     import umath as math
 else:
     from pybricks.hubs import EV3Brick
@@ -30,10 +36,11 @@ else:
     display = hub.screen
     display.clear()
 
-    # EV3 specific imports
     from threading import Thread as thread_handler
     from pybricks.media.ev3dev import Font
     from pybricks.ev3devices import Motor
+    import socket
+    import struct
     import math
 
     FONT = Font('Lucida', 32, bold=True)
@@ -45,13 +52,23 @@ from pybricks.tools import wait
 
 opt_level(3)
 
+def GetPort(port: str["A", "B", "C", "D", "E", "F"]) -> Port:
+    if port == "A": return Port.A
+    if port == "B": return Port.B
+    if port == "C": return Port.C
+    if port == "D": return Port.D
+    if port == "E": return Port.E
+    if port == "F": return Port.F
+
+    raise ValueError("Invalid port: " + port)
+
 # Variables needed for classes and functions
-_WHEEL_DIAMETER = PATH_PLANNER_DATA["drivebase"]["wheel_diameter"]
-_AXLE_TRACK = PATH_PLANNER_DATA["drivebase"]["axle_track"]
+_WHEEL_DIAMETER = PATH_PLANNER_DATA["drive_base"]["wheel_diameter"]
+_AXLE_TRACK = PATH_PLANNER_DATA["drive_base"]["axle_track"]
 _WHEEL_RADIUS = _WHEEL_DIAMETER / 2
 _WHEEL_CIRCUMFERENCE = math.pi * _WHEEL_DIAMETER
-_LEFT_MOTOR = Motor(ord(PATH_PLANNER_DATA["left_motor"]))
-_RIGHT_MOTOR = Motor(ord(PATH_PLANNER_DATA["right_motor"]))
+_LEFT_MOTOR = Motor(GetPort(PATH_PLANNER_DATA["drive_base"]["left_motor"]))
+_RIGHT_MOTOR = Motor(GetPort(PATH_PLANNER_DATA["drive_base"]["right_motor"]))
 _ROBOT = DriveBase(_LEFT_MOTOR, _RIGHT_MOTOR, _WHEEL_DIAMETER, _AXLE_TRACK)
 
 quit_program = False
@@ -140,6 +157,50 @@ class Light:
 light = Light()
 light.blink(Color.ORANGE, [0.2, 0.5])
 
+class VisualizationServer:
+    def __init__(self):
+        self.previously_paused = False
+        if _HUB_TYPE == "Spike":
+            self.server = stdout
+        else:
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.connect((_VISUALIZE_IP, _VISUALIZE_PORT))
+
+    def _send_bytes(self, data : bytes):
+        if _HUB_TYPE == "Spike":
+            self.server.write(data)
+        else:
+            self.server.sendall(data)
+    
+    def _read_bytes(self, chunk_size : int = 512) -> bytes:
+        if _HUB_TYPE == "Spike":
+            return self.server.buffer.read(chunk_size)
+        else:
+            return self.server.recv(chunk_size)
+
+    def send_initial_data(self, data : list[list[list[float, float]], int, int]):
+        chunk_size = 20
+        serialized_data = str(data).encode() if _HUB_TYPE == "EV3" else bytearray(str(data), 'utf-8')
+        total_sent = 0
+        while total_sent < len(serialized_data):
+            chunk = serialized_data[total_sent:total_sent + chunk_size]
+            self._send_bytes(b'#' + chunk) if _HUB_TYPE == "Spike" else self._send_bytes(chunk)
+            total_sent += len(chunk)
+        
+        while self._read_bytes(2) != b"ok":
+            pass
+
+    def send_data(self, x : float, y : float, heading : float, targetSpeed : float, curvature : float, goalIndex : int):
+        self._send_bytes(struct.pack('6f', x, y, heading, targetSpeed, curvature, float(goalIndex)))
+
+    def start(self):
+        if self.previously_paused:
+            self._send_bytes(b"restart")
+
+    def stop(self):
+        self.previously_paused = True
+        self._send_bytes(b"stop")
+
 def RobotAngle():
     if _HUB_TYPE == "Spike":
         return hub.imu.heading()
@@ -179,7 +240,7 @@ class TableRun:
 
 _run_program_args = ()
 class CustomRunSelector:
-    def __init__(self, runs : list[TableRun]):
+    def __init__(self, runs : list[TableRun], visualization : VisualizationServer | None = None):
         self.runs = runs
         self.run_index = 0
         self.last_left_pressed = False
@@ -188,6 +249,7 @@ class CustomRunSelector:
         self.running_program = False
         self.exited = False
         self.quit_program = False
+        self.visualization = visualization
 
     def get_status(self):
         return self.exited == False
@@ -198,13 +260,30 @@ class CustomRunSelector:
         print("Running: " + run.name)
         controller = DriveController(run)
 
+        if self.visualization is not None:
+            path = controller.path
+            lookahead_dis = 30
+            curvature_points = controller.curvature_points
+
+            self.visualization.start()
+            self.visualization.send_initial_data([path, lookahead_dis, curvature_points])
+
+        frames = 0
         while not controller.status and not quit_program:
             controller.UpdateCoordinatesSpike() if _HUB_TYPE == "Spike" else controller.UpdateCoordinatesEV3()
             controller.RunPurePursuit()
             _ROBOT.drive(controller.target_speed, controller.turn_rate)
 
+            frames += 1
+            if self.visualization is not None and frames == _SEND_EVERY_X_FRAMES:
+                self.visualization.send_data(controller.xpos, controller.ypos, controller.heading, controller.target_speed, controller.curvature, controller.goal_index)
+                frames = 0
+
         _ROBOT.stop()
         print("Finished running: " + run.name)
+
+        if self.visualization is not None:
+            self.visualization.stop()
 
         del controller
         self.quit_program = True
@@ -423,10 +502,17 @@ runs = []
 for run in PATH_PLANNER_DATA["runs"]:
     runs.append(TableRun(run["name"], "", "left", run["points"]))
 
+if _VISUALIZE:
+    print("Initializing visualization server...")
+    visualization = VisualizationServer()
+    print("Connected to visualization server!")
+else:
+    visualization = None
+
 wait(1500)
 light.off()
 try:
-    selector = CustomRunSelector(runs)
+    selector = CustomRunSelector(runs, visualization)
     print("Initialized the run selector! Select a run to begin.")
 except Exception as e:
     light.blink(Color.RED, [0.5, 0.5])
