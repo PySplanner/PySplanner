@@ -44,11 +44,11 @@ Other Notes:
     - The EV3 visualization server is a simple TCP server that receives data from the EV3 and displays it in a window.
     - The SPIKE visualization server is a BLE server that receives data from the SPIKE and displays it in a window.
 '''
-_HUB_TYPE = "Spike" # "Spike", "EV3"
+_HUB_TYPE = "EV3" # "Spike", "EV3"
 
 _MONITOR_FPS = True
-_VISUALIZE = False
-_VISUALIZE_IP = "169.254.12.184"
+_VISUALIZE = True
+_VISUALIZE_IP = "169.254.219.105"
 _VISUALIZE_PORT = 65432
 _SEND_EVERY_X_FRAMES = 3
 
@@ -98,7 +98,6 @@ if _HUB_TYPE == "Spike":
     from pybricks.tools import multitask as thread_handler
     from pybricks.pupdevices import Motor
     from pybricks.tools import StopWatch
-    import urandom as random
     import ustruct as struct
     from usys import stdout
     import umath as math
@@ -113,7 +112,6 @@ else:
     from threading import Thread as thread_handler
     from pybricks.media.ev3dev import Font
     from pybricks.ev3devices import Motor
-    import random
     import struct
     import socket
     import math
@@ -145,8 +143,8 @@ _AXLE_TRACK = const(93) if _HUB_TYPE == "EV3" else const(90)  # Distance between
 _WHEEL_RADIUS = _WHEEL_DIAMETER / 2  # Calculate the wheel radius
 _WHEEL_CIRCUMFERENCE = math.pi * _WHEEL_DIAMETER  # Calculate the wheel circumference
 if _HUB_TYPE != "Spike":
-    _LEFT_MOTOR = Motor(Port.A)
-    _RIGHT_MOTOR = Motor(Port.D)
+    _LEFT_MOTOR = Motor(Port.D)
+    _RIGHT_MOTOR = Motor(Port.A)
 else:
     _LEFT_MOTOR = Motor(Port.A, Direction.COUNTERCLOCKWISE)
     _RIGHT_MOTOR = Motor(Port.E, Direction.CLOCKWISE)
