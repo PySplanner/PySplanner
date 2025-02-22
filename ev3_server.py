@@ -16,7 +16,7 @@ def DisplayWaitingFrame():
 
 DisplayWaitingFrame()
 
-HOST = '169.254.144.230' # EV3 IP address
+HOST = '169.254.12.184' # EV3 IP address
 PORT = 65432 # Port to connect to
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
