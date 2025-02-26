@@ -37,3 +37,6 @@ To facilitate testing and optimization, PySplanner includes a visualization modu
 
 ### PySplanner Run File
 All components of PySplanner—path planning, coordinate updating, and pure pursuit execution—are consolidated into a streamlined run file. This file also includes a run selector for easy management of multiple missions, alongside optimizations tailored for both EV3 and SPIKE PRIME/Inventor platforms. With the option to choose between these platforms, users can leverage PySplanner’s full capabilities on their preferred hub, benefiting from its robust, optimized, and heavily-tested framework.
+
+# License and Copyright
+PySplanner is licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</a> license, see more information on the <a href="https://github.com/PySplanner" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">main organization page</a>
