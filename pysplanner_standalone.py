@@ -5,6 +5,7 @@
 # © 2024 DylDev (https://github.com/DylDevs)
 # © 2024 techcatgato (https://github.com/techcatgato)
 # © 2024 SkroutzTBY (https://github.com/SkroutzTBY)
+# © 2024 Sketchy (https://github.com/3xSketchy)
 
 '''
 Main PySplanner program, includes the run selector and the main run loop.

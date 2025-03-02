@@ -4,7 +4,8 @@
 # Licensed under the GNU General Public License v3.0
 # © 2024 DylDev (https://github.com/DylDevs)
 # © 2024 techcatgato (https://github.com/techcatgato)
-# © 2024 SkroutzTBY (https://github.com/SkroutzTBY)
+# © 2024 Skrauzy (https://github.com/PumpkinDoesCoding)
+# © 2024 Sketchy (https://github.com/3xSketchy)
 # NOTE: Comments and some QOL features have been removed to save on file size
 
 PATH_PLANNER_DATA = "{INSERT_PATH_PLANNER_DATA}"
