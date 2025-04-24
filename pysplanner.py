@@ -416,15 +416,24 @@ class DriveController:
         linear = (left_distance_traveled + right_distance_traveled) / 2
         angle_change = self.heading - self.last_heading
 
-        if angle_change == 0 or linear == 0:
+        if abs(angle_change) < 1e-6 or linear == 0:
             self.xpos += math.sin(math.radians(self.heading)) * linear
             self.ypos += math.cos(math.radians(self.heading)) * linear
         else:
-            radius = linear / math.radians(angle_change)
-            center_x = self.xpos - radius * math.sin(math.radians(self.last_heading))
-            center_y = self.ypos + radius * math.cos(math.radians(self.last_heading))
-            self.xpos = center_x + radius * math.sin(math.radians(self.heading))
-            self.ypos = center_y - radius * math.cos(math.radians(self.heading))
+            radius = (linear * (360 / abs(angle_change))) / (2 * math.pi)
+
+            # THis is the old stuff, don't remove it because the new stuff isn't 100% tested
+            #center_x = self.xpos - radius * math.sin(math.radians(self.last_heading))
+            #center_y = self.ypos + radius * math.cos(math.radians(self.last_heading))
+            #self.xpos = center_x + radius * math.sin(math.radians(self.heading))
+            #self.ypos = center_y - radius * math.cos(math.radians(self.heading))
+
+            rX = radius - (math.cos(math.radians(abs(angle_change))) * radius)
+            rY = math.sin(math.radians(abs(angle_change))) * radius
+            rD = math.sqrt(rX ** 2 + rY ** 2)
+            rA = math.radians(self.last_heading) + (math.asin(rX / rD) * (angle_change / abs(angle_change)))
+            self.xpos += math.sin(rA) * rD
+            self.ypos += math.cos(rA) * rD
 
         self.last_distance_left = left_total_distance
         self.last_distance_right = right_total_distance
